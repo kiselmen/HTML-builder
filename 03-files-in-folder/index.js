@@ -10,7 +10,7 @@ const { stdout } = require('process');
             const path = dir.join(__dirname, 'secret-folder', file.name);
             const ext = dir.extname(path).substring(1);
             const info = await fs.stat(path);
-            stdout.write(name + ' ' + ext + ' ' + info.size +'\n');
+            stdout.write(name + ' - ' + ext + ' - ' + info.size +'b\n');
         }
     }
 })()

@@ -5,7 +5,7 @@ const dir = require('path');
 async function deleteFolder(folder) {
     try {
         await fs.promises.rm(folder, {recursive : true, focre : true});
-        console.log('Delete folder ' + folder);
+        // console.log('Delete folder ' + folder);
     } catch (err) {
         if (!(err.errno === -4058||err.errno === -4051)) throw err
     }
@@ -13,7 +13,7 @@ async function deleteFolder(folder) {
 async function createFolder(folder) {
     try {
         await fs.promises.mkdir(folder, { recursive: true });
-        console.log('Create folder ' + folder);
+        // console.log('Create folder ' + folder);
     } catch (err) {
         throw err;
     }
@@ -25,20 +25,28 @@ async function copyFiles(from, to) {
             await createFolder(dir.join(to, file.name));
             await copyFiles(dir.join(from, file.name), dir.join(to, file.name));
         } else if (file.isFile()) {
-            const streamFrom = fs.createReadStream(dir.join(from, file.name));
+            fs.copyFile(dir.join(from, file.name), dir.join(to, file.name), (err) => {
+                            if (err) {
+                                console.log('Can not write file: ', err)
+                            }
+                        })
+            // await copyCurrentFile(file)
+            // async function copyCurrentFile(file){
+            //     const streamFrom = await fs.createReadStream(dir.join(from, file.name));
 
-            let fileData = '';
-            streamFrom.on('data', chunk => fileData += chunk);
-            streamFrom.on('end', () => {
-                // console.log('Read from file ' + dir.join(from, file.name));
-                fs.writeFile(dir.join(to, file.name), fileData, (err) => {
-                    if (err) {
-                        console.log('Can not write file: ', err)
-                    }
-                });
-                // console.log('Write to file ' + dir.join(to, file.name));
-            });
-            streamFrom.on('error', err => console.log('Can not read file: ', err));            
+            //     let fileData = '';
+            //     streamFrom.on('data', chunk => fileData += chunk);
+            //     streamFrom.on('end', () => {
+            //         console.log('Read from file ' + dir.join(from, file.name));
+            //         fs.writeFile(dir.join(to, file.name), fileData, (err) => {
+            //             if (err) {
+            //                 console.log('Can not write file: ', err)
+            //             }
+            //         });
+            //         // console.log('Write to file ' + dir.join(to, file.name));
+            //     });
+            //     streamFrom.on('error', err => console.log('Can not read file: ', err));            
+            // }
         }
     }
 }
@@ -50,7 +58,7 @@ async function bundleCSS(filePath, folderPath){
         for (const file of files) {
             if (dir.extname(dir.join(folderPath, file.name)) === '.css'){
                 const fileContent = await fsPromises.readFile(dir.join(folderPath, file.name), 'utf8');
-                styles += fileContent;
+                styles += fileContent + '\n';
             }
         }
         await fsPromises.writeFile(filePath, styles);
@@ -95,7 +103,7 @@ const pathTo = dir.join(__dirname, 'project-dist');
     await deleteFolder(pathTo);
     await createFolder(pathTo);
     await createFolder(dir.join(pathTo, 'assets'))
-    copyFiles(dir.join(__dirname, 'assets'), dir.join(pathTo, 'assets'));
-    bundleCSS(dir.join(pathTo, 'bundle.css'), dir.join(__dirname, 'styles'));
-    bundleHTML(dir.join(__dirname, 'template.html'), dir.join(pathTo, 'index.html'), dir.join(__dirname, 'components'));
+    await copyFiles(dir.join(__dirname, 'assets'), dir.join(pathTo, 'assets'));
+    await bundleCSS(dir.join(pathTo, 'style.css'), dir.join(__dirname, 'styles'));
+    await bundleHTML(dir.join(__dirname, 'template.html'), dir.join(pathTo, 'index.html'), dir.join(__dirname, 'components'));
 })()
