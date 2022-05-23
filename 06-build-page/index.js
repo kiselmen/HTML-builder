@@ -30,23 +30,6 @@ async function copyFiles(from, to) {
                                 console.log('Can not write file: ', err)
                             }
                         })
-            // await copyCurrentFile(file)
-            // async function copyCurrentFile(file){
-            //     const streamFrom = await fs.createReadStream(dir.join(from, file.name));
-
-            //     let fileData = '';
-            //     streamFrom.on('data', chunk => fileData += chunk);
-            //     streamFrom.on('end', () => {
-            //         console.log('Read from file ' + dir.join(from, file.name));
-            //         fs.writeFile(dir.join(to, file.name), fileData, (err) => {
-            //             if (err) {
-            //                 console.log('Can not write file: ', err)
-            //             }
-            //         });
-            //         // console.log('Write to file ' + dir.join(to, file.name));
-            //     });
-            //     streamFrom.on('error', err => console.log('Can not read file: ', err));            
-            // }
         }
     }
 }
