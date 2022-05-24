@@ -6,7 +6,9 @@ const { stdout } = require('process');
     const files = await fs.readdir(dir.join(__dirname, 'secret-folder'), { withFileTypes: true });
     for (const file of files){
         if (file.isFile()) {
-            const name = file.name.split('.')[0];
+            const names = file.name.split('.');
+            if (names.length > 1) names.pop();
+            const name = names.join('.');
             const path = dir.join(__dirname, 'secret-folder', file.name);
             const ext = dir.extname(path).substring(1);
             const info = await fs.stat(path);
